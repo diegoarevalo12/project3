@@ -1,0 +1,69 @@
+/* Reset margins and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Set a font for the body */
+body {
+    font-family: Arial, sans-serif;  /* You can choose any font here */
+    background-color: #f4f4f4;      /* A light gray background */
+    color: #333;                    /* Dark gray text color */
+    margin: 20px;                   /* Adds some space around the page */
+}
+
+/* Styling the main title */
+h1 {
+    font-size: 2.5em;               /* Larger font size */
+    color: #2c3e50;                 /* A dark color for the title */
+    text-align: center;             /* Center the title */
+    margin-bottom: 30px;            /* Add some space below the title */
+}
+
+/* Optional: You can add more styles for other elements */
+
+#chart {
+    margin: auto;
+    width: 90%;
+    max-width: 1200px;
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+/* Individual legend item styling */
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Color swatches */
+.swatch {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 50%;  /* Circle style for the swatches */
+    display: inline-block;
+}
+
+#legend-dropdown {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    width: 220px;
+    height: 30px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+#legend-dropdown option {
+    padding: 5px;
+}
