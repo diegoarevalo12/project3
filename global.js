@@ -22,7 +22,7 @@ async function loadData() {
 }
 
 function createLinePlot(smoothedMaleData, smoothedFemaleData) {
-    const margin = { top: 50, right: 200, bottom: 70, left: 80 }; // Increased bottom and left margin for axis labels
+    const margin = { top: 50, right: 200, bottom: 70, left: 80 }; // Adjusted margins for axis labels
     const width = 1200 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
 
@@ -39,18 +39,27 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
 
     // Define the scales
     const x = d3.scaleLinear()
-        .domain([0, d3.max(smoothedMaleData, d => d.minute)]) // Use the maximum minute from the male data
+        .domain([0, 1440])  // 1440 minutes in a day (24 hours × 60 minutes)
         .range([0, width]);
 
+    // Set the y-scale with a hard upper limit at 60 (as per your request)
     const y = d3.scaleLinear()
-        .domain([d3.min([d3.min(smoothedMaleData, d => d.temperature), d3.min(smoothedFemaleData, d => d.temperature)]),
-                 d3.max([d3.max(smoothedMaleData, d => d.temperature), d3.max(smoothedFemaleData, d => d.temperature)])])
+        .domain([ 
+            d3.min([d3.min(smoothedMaleData, d => d.temperature), d3.min(smoothedFemaleData, d => d.temperature)]),
+            60  // Explicitly set the max y to 60
+        ])
         .range([height, 0]);
 
     // Add X and Y axes
     svg.append('g')
         .attr('transform', `translate(0,${height})`)
-        .call(d3.axisBottom(x).ticks(12).tickFormat(d => d % 60 === 0 ? `${d / 60}:00` : '')); // Display hour ticks
+        .call(d3.axisBottom(x)
+            .tickValues(d3.range(0, 1441, 120))  // Tick every 120 minutes (2 hours)
+            .tickFormat(d => {
+                const hours = Math.floor(d / 60);
+                return `${hours}:00`;  // Display as hours (e.g., 0:00, 2:00, etc.)
+            })
+        );
 
     svg.append('g')
         .call(d3.axisLeft(y));
@@ -63,6 +72,7 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
         d3.axisLeft(y)
         .tickSize(-width)  // Make ticks as long as the width of the chart to create horizontal lines
         .tickFormat('')    // Remove tick labels for the gridlines
+        .ticks(10)  // Dynamically generate ticks based on the y-scale (10 ticks between 0 and 60)
     )
     .selectAll('line')    // Select all gridline elements
     .style('stroke', '#ccc')  // Light gray color
@@ -74,21 +84,21 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
         .y(d => y(d.temperature));
 
     // Add the smoothed male line to the plot
-    svg.append('path')
+    const maleLine = svg.append('path')
         .data([smoothedMaleData])
         .attr('class', 'line')
         .attr('d', line)
         .style('stroke', '#1f77b4')  // Male data line (blue)
-        .style('stroke-width', 2)
+        .style('stroke-width', 2.5)
         .style('fill', 'none');
 
     // Add the smoothed female line to the plot
-    svg.append('path')
+    const femaleLine = svg.append('path')
         .data([smoothedFemaleData])
         .attr('class', 'line')
         .attr('d', line)
         .style('stroke', '#ff7f0e')  // Female data line (orange)
-        .style('stroke-width', 2)
+        .style('stroke-width', 2.5)
         .style('fill', 'none');
 
     // Add a title for the plot
@@ -134,6 +144,36 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
     legendContainer.append('div')
         .attr('class', 'legend-item')
         .html(`<span class="swatch" style="background-color: #ff7f0e;"></span> Female Activity`);
+
+    // Create the dropdown menu to control line visibility
+    const dropdown = d3.select('body').append('select')
+        .attr('id', 'legend-dropdown')
+        .style('position', 'absolute')
+        .style('top', `${margin.top + 20}px`)
+        .style('left', `${width + margin.left + 100}px`)
+        .style('font-size', '14px')
+        .style('padding', '5px')
+        .style('border-radius', '4px');
+
+    dropdown.append('option').text('Both').attr('value', 'both');
+    dropdown.append('option').text('Male Activity Only').attr('value', 'male');
+    dropdown.append('option').text('Female Activity Only').attr('value', 'female');
+
+    dropdown.on('change', function() {
+        const selectedValue = this.value;
+
+        // Show or hide the lines based on the dropdown selection
+        if (selectedValue === 'male') {
+            maleLine.style('display', 'inline');
+            femaleLine.style('display', 'none');
+        } else if (selectedValue === 'female') {
+            maleLine.style('display', 'none');
+            femaleLine.style('display', 'inline');
+        } else {
+            maleLine.style('display', 'inline');
+            femaleLine.style('display', 'inline');
+        }
+    });
 }
 
 
