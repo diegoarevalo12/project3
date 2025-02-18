@@ -22,7 +22,7 @@ async function loadData() {
 }
 
 function createLinePlot(smoothedMaleData, smoothedFemaleData) {
-    const margin = { top: 50, right: 30, bottom: 40, left: 40 }; // Increased top margin for title visibility
+    const margin = { top: 50, right: 150, bottom: 40, left: 40 }; // Increased right margin for legend positioning
     const width = 900 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
@@ -96,41 +96,27 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
         .style('font-size', '16px')
         .text('Median Body Temperature of Male and Female Mice Throughout the Day');
 
-    // Add a legend
-    const legend = svg.append('g')
+    // Create a legend container (HTML) outside the SVG
+    const legendContainer = d3.select('body').append('div')
         .attr('class', 'legend')
-        .attr('transform', `translate(${width - 150}, 20)`);  // Position the legend to the right of the plot
+        .style('position', 'absolute')
+        .style('top', `${margin.top + 50}px`)
+        .style('left', `${width + margin.left + 30}px`)
+        .style('font-family', 'Arial, sans-serif')
+        .style('font-size', '14px');
 
     // Male Legend
-    legend.append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', 20)
-        .attr('height', 20)
-        .style('fill', '#1f77b4');  // Blue for male data
-
-    legend.append('text')
-        .attr('x', 25)
-        .attr('y', 15)
-        .style('font-size', '12px')
-        .style('fill', '#1f77b4')  // Same blue color for the text
-        .text('Male');
+    legendContainer.append('div')
+        .attr('class', 'legend-item')
+        .html(`<span class="swatch" style="background-color: #1f77b4;"></span> Male`);
 
     // Female Legend
-    legend.append('rect')
-        .attr('x', 0)
-        .attr('y', 30)
-        .attr('width', 20)
-        .attr('height', 20)
-        .style('fill', '#ff7f0e');  // Orange for female data
-
-    legend.append('text')
-        .attr('x', 25)
-        .attr('y', 45)
-        .style('font-size', '12px')
-        .style('fill', '#ff7f0e')  // Same orange color for the text
-        .text('Female');
+    legendContainer.append('div')
+        .attr('class', 'legend-item')
+        .html(`<span class="swatch" style="background-color: #ff7f0e;"></span> Female`);
 }
+
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
