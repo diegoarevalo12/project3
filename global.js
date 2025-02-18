@@ -22,9 +22,12 @@ async function loadData() {
 }
 
 function createLinePlot(smoothedMaleData, smoothedFemaleData) {
-    const margin = { top: 50, right: 150, bottom: 40, left: 40 }; // Increased right margin for legend positioning
-    const width = 900 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const margin = { top: 50, right: 200, bottom: 70, left: 80 }; // Increased bottom and left margin for axis labels
+    const width = 1200 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
+
+    // Remove existing chart if any (for re-renders)
+    d3.select('#chart').selectAll('*').remove();
 
     // Create the SVG container for the plot
     const svg = d3.select('#chart')
@@ -93,30 +96,45 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
         .attr('x', width / 2)
         .attr('y', -margin.top / 2)  // Adjusted y-position for visibility
         .attr('text-anchor', 'middle')
-        .style('font-size', '16px')
-        .text('Median Body Temperature of Male and Female Mice Throughout the Day');
+        .style('font-size', '18px')
+        .text('Median Activity of Male and Female Mice Throughout the Day');
+
+    // Add X-axis title
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height + 40)  // Adjusted y-position to below the x-axis
+        .attr('text-anchor', 'middle')
+        .style('font-size', '14px')
+        .text('Time of Day (hours)');
+
+    // Add Y-axis title
+    svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -margin.left + 20)  // Adjusted position for Y axis title
+        .attr('x', -height / 2)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '14px')
+        .text('Median Activity Level');
 
     // Create a legend container (HTML) outside the SVG
     const legendContainer = d3.select('body').append('div')
         .attr('class', 'legend')
         .style('position', 'absolute')
-        .style('top', `${margin.top + 50}px`)
-        .style('left', `${width + margin.left + 30}px`)
+        .style('top', `${margin.top + 150}px`)
+        .style('left', `${width + margin.left + 100}px`)
         .style('font-family', 'Arial, sans-serif')
         .style('font-size', '14px');
 
     // Male Legend
     legendContainer.append('div')
         .attr('class', 'legend-item')
-        .html(`<span class="swatch" style="background-color: #1f77b4;"></span> Male`);
+        .html(`<span class="swatch" style="background-color: #1f77b4;"></span> Male Activity`);
 
     // Female Legend
     legendContainer.append('div')
         .attr('class', 'legend-item')
-        .html(`<span class="swatch" style="background-color: #ff7f0e;"></span> Female`);
+        .html(`<span class="swatch" style="background-color: #ff7f0e;"></span> Female Activity`);
 }
-
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
