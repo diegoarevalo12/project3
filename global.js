@@ -50,6 +50,15 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
         ])
         .range([height, 0]);
 
+    // Add shaded background for "lights off" period
+    svg.append('rect')
+        .attr('x', x(0)) // Start from the beginning of the graph
+        .attr('y', 0)
+        .attr('width', x(720)) // Cover from 0 to 12:00 (720 minutes)
+        .attr('height', height)
+        .style('fill', 'lightgrey')
+        .style('opacity', 0.6); // Light grey color with 60% opacity
+
     // Add X and Y axes
     svg.append('g')
         .attr('transform', `translate(0,${height})`)
@@ -201,6 +210,7 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
         }
     });
 }
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
