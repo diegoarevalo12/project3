@@ -42,11 +42,11 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
         .domain([0, 1440])  // 1440 minutes in a day (24 hours × 60 minutes)
         .range([0, width]);
 
-    // Set the y-scale with a hard upper limit at 60 (as per your request)
+    // Set the y-scale with a hard upper limit at 60
     const y = d3.scaleLinear()
         .domain([ 
             d3.min([d3.min(smoothedMaleData, d => d.temperature), d3.min(smoothedFemaleData, d => d.temperature)]),
-            60  // Explicitly set the max y to 60
+            60
         ])
         .range([height, 0]);
 
@@ -57,7 +57,7 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
             .tickValues(d3.range(0, 1441, 120))  // Tick every 120 minutes (2 hours)
             .tickFormat(d => {
                 const hours = Math.floor(d / 60);
-                return `${hours}:00`;  // Display as hours (e.g., 0:00, 2:00, etc.)
+                return `${hours}:00`;
             })
         );
 
@@ -70,12 +70,12 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
 
     gridlines.call(
         d3.axisLeft(y)
-        .tickSize(-width)  // Make ticks as long as the width of the chart to create horizontal lines
-        .tickFormat('')    // Remove tick labels for the gridlines
-        .ticks(10)  // Dynamically generate ticks based on the y-scale (10 ticks between 0 and 60)
+        .tickSize(-width)
+        .tickFormat('')
+        .ticks(10)
     )
-    .selectAll('line')    // Select all gridline elements
-    .style('stroke', '#ccc')  // Light gray color
+    .selectAll('line')
+    .style('stroke', '#ccc')
     .style('stroke-opacity', 0.8);
 
     // Create the line generator function
@@ -104,7 +104,7 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
     // Add a title for the plot
     svg.append('text')
         .attr('x', width / 2)
-        .attr('y', -margin.top / 2)  // Adjusted y-position for visibility
+        .attr('y', -margin.top / 2)
         .attr('text-anchor', 'middle')
         .style('font-size', '18px')
         .text('Median Activity of Male and Female Mice Throughout the Day');
@@ -112,7 +112,7 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
     // Add X-axis title
     svg.append('text')
         .attr('x', width / 2)
-        .attr('y', height + 40)  // Adjusted y-position to below the x-axis
+        .attr('y', height + 40)
         .attr('text-anchor', 'middle')
         .style('font-size', '14px')
         .text('Time of Day (hours)');
@@ -120,11 +120,38 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
     // Add Y-axis title
     svg.append('text')
         .attr('transform', 'rotate(-90)')
-        .attr('y', -margin.left + 20)  // Adjusted position for Y axis title
+        .attr('y', -margin.left + 20)
         .attr('x', -height / 2)
         .attr('text-anchor', 'middle')
         .style('font-size', '14px')
         .text('Median Activity Level');
+
+    // Add vertical line at 12:00 (720 minutes)
+    svg.append('line')
+        .attr('x1', x(720))
+        .attr('x2', x(720))
+        .attr('y1', 0)
+        .attr('y2', height)
+        .attr('stroke', 'black')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '5,5');  // Dotted line
+
+    // Add labels for Darkness and Lights On
+    svg.append('text')
+        .attr('x', x(360))  // Position for Darkness label (before 12:00)
+        .attr('y', -10)     // Position above the graph
+        .attr('text-anchor', 'middle')
+        .style('font-size', '14px')
+        .style('font-weight', 'bold')
+        .text('Darkness (Lights Off)');
+
+    svg.append('text')
+        .attr('x', x(1080))  // Position for Lights On label (after 12:00)
+        .attr('y', -10)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '14px')
+        .style('font-weight', 'bold')
+        .text('Lights On');
 
     // Create a legend container (HTML) outside the SVG
     const legendContainer = d3.select('body').append('div')
@@ -162,7 +189,6 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
     dropdown.on('change', function() {
         const selectedValue = this.value;
 
-        // Show or hide the lines based on the dropdown selection
         if (selectedValue === 'male') {
             maleLine.style('display', 'inline');
             femaleLine.style('display', 'none');
