@@ -176,7 +176,7 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData) {
     const dropdown = d3.select('body').append('select')
         .attr('id', 'legend-dropdown')
         .style('position', 'absolute')
-        .style('top', `${margin.top + 20}px`)
+        .style('top', `${margin.top + 250}px`)
         .style('left', `${width + margin.left + 100}px`)
         .style('font-size', '14px')
         .style('padding', '5px')
