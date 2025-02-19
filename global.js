@@ -146,7 +146,68 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData, differenceData) {
             differenceLine.style('display', 'inline');
             svg.selectAll('.shaded-area').style('display', 'inline');
         }
-    });
+
+            // Add the brush interaction
+    const brush = d3.brush()
+    .on('start brush end', brushed);
+
+    svg.call(brush);
+
+    let brushSelection = null;
+
+    function brushed(event) {
+        brushSelection = event.selection;
+        if (!brushSelection) return;
+
+        const [x0, y0] = brushSelection[0];
+        const [x1, y1] = brushSelection[1];
+
+        const startMinute = x.invert(x0);
+        const endMinute = x.invert(x1);
+
+        const malePercentChange = calculatePercentChange(smoothedMaleData, startMinute, endMinute);
+        const femalePercentChange = calculatePercentChange(smoothedFemaleData, startMinute, endMinute);
+
+        // Update the mini legend with the percent change
+        updateMiniLegend(malePercentChange, femalePercentChange, x0, y0);
+        }
+
+    function calculatePercentChange(data, start, end) {
+        const startValue = data.find(d => d.minute === Math.floor(start)).temperature;
+        const endValue = data.find(d => d.minute === Math.floor(end)).temperature;
+        return ((endValue - startValue) / startValue) * 100;
+    }
+
+    function updateMiniLegend(malePercentChange, femalePercentChange, xPos, yPos) {
+        const miniLegend = svg.select('.mini-legend');
+        if (miniLegend.empty()) {
+            svg.append('g')
+                .attr('class', 'mini-legend')
+                .style('visibility', 'hidden')
+                .attr('transform', `translate(${xPos + 15}, ${yPos - 30})`);
+        }
+
+        svg.select('.mini-legend').html('')
+            .style('visibility', 'visible')
+            .attr('transform', `translate(${xPos + 15}, ${yPos - 30})`);
+
+        svg.select('.mini-legend')
+            .append('text')
+            .style('font-size', '12px')
+            .style('font-weight', 'bold')
+            .text('Percent Change');
+
+        svg.select('.mini-legend')
+            .append('text')
+            .style('font-size', '12px')
+            .text(`Male: ${malePercentChange.toFixed(2)}%`);
+
+        svg.select('.mini-legend')
+            .append('text')
+            .style('font-size', '12px')
+            .text(`Female: ${femalePercentChange.toFixed(2)}%`);
+    }
+        });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
