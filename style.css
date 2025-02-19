@@ -1,4 +1,4 @@
-/* Reset margins and padding */
+/* Reset margins and padding */ 
 * {
     margin: 0;
     padding: 0;
@@ -27,6 +27,7 @@ h1 {
     width: 100%;
     max-width: 1200px;  /* Maximum width for larger screens */
     height: auto;       /* Allow height to adjust based on the width */
+    position: relative;
 }
 
 /* Styling the legend */
@@ -84,6 +85,34 @@ h1 {
     padding: 5px;
 }
 
+/* Brush feature styling */
+.brush .selection {
+    fill: lightblue;  /* Light blue selection area */
+    fill-opacity: 0.3;
+    stroke: #2196F3;  /* Blue border for the brush selection */
+    stroke-width: 2;
+}
+
+/* Percentage change tooltip styling */
+.percentage-change {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 6px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    color: #333;
+    max-width: 250px;
+}
+
+/* Tooltip positioning for percentage change */
+.percentage-change {
+    position: absolute;
+    top: 10%;
+    left: 80%;
+    transform: translateX(10px);  /* Slight offset for neatness */
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
     .legend {
@@ -94,5 +123,10 @@ h1 {
 
     #legend-dropdown {
         width: 100%; /* Full width dropdown on smaller screens */
+    }
+
+    .percentage-change {
+        left: 100%;
+        transform: translateX(10px); /* Tooltip aligns more neatly on smaller screens */
     }
 }
