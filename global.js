@@ -85,13 +85,19 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData, differenceData) {
         .style('fill', '#2ca02c')
         .style('fill-opacity', 0.3);
 
-    // Add chart titles and vertical line
+    // Add chart title
     svg.append('text').attr('x', width / 2).attr('y', -margin.top / 2).attr('text-anchor', 'middle').style('font-size', '18px')
         .text('Median Activity of Male and Female Mice Throughout the Day');
+
+    // Add x-axis title
     svg.append('text').attr('x', width / 2).attr('y', height + 40).attr('text-anchor', 'middle').style('font-size', '14px')
-        .text('Time of Day (hours)');
+        .text('Time (Hours)'); // This is the title for the x-axis
+
+    // Add y-axis title
     svg.append('text').attr('transform', 'rotate(-90)').attr('y', -margin.left + 20).attr('x', -height / 2).attr('text-anchor', 'middle')
-        .style('font-size', '14px').text('Median Activity Level');
+        .style('font-size', '14px').text('Median Activity'); // This is the title for the y-axis
+
+    // Add a vertical line at 6:00 AM (720 minutes)
     svg.append('line').attr('x1', x(720)).attr('x2', x(720)).attr('y1', 0).attr('y2', height).attr('stroke', 'black')
         .attr('stroke-width', 2).attr('stroke-dasharray', '5,5');
 
@@ -147,68 +153,67 @@ function createLinePlot(smoothedMaleData, smoothedFemaleData, differenceData) {
             svg.selectAll('.shaded-area').style('display', 'inline');
         }
 
-            // Add the brush interaction
-    const brush = d3.brush()
-    .on('start brush end', brushed);
+        // Add the brush interaction
+        const brush = d3.brush().on('start brush end', brushed);
+        svg.call(brush);
 
-    svg.call(brush);
+        let brushSelection = null;
 
-    let brushSelection = null;
+        function brushed(event) {
+            brushSelection = event.selection;
+            if (!brushSelection) return;
 
-    function brushed(event) {
-        brushSelection = event.selection;
-        if (!brushSelection) return;
+            const [x0, y0] = brushSelection[0];
+            const [x1, y1] = brushSelection[1];
 
-        const [x0, y0] = brushSelection[0];
-        const [x1, y1] = brushSelection[1];
+            const startMinute = x.invert(x0);
+            const endMinute = x.invert(x1);
 
-        const startMinute = x.invert(x0);
-        const endMinute = x.invert(x1);
+            const malePercentChange = calculatePercentChange(smoothedMaleData, startMinute, endMinute);
+            const femalePercentChange = calculatePercentChange(smoothedFemaleData, startMinute, endMinute);
 
-        const malePercentChange = calculatePercentChange(smoothedMaleData, startMinute, endMinute);
-        const femalePercentChange = calculatePercentChange(smoothedFemaleData, startMinute, endMinute);
-
-        // Update the mini legend with the percent change
-        updateMiniLegend(malePercentChange, femalePercentChange, x0, y0);
+            // Update the mini legend with the percent change
+            updateMiniLegend(malePercentChange, femalePercentChange, x0, y0);
         }
 
-    function calculatePercentChange(data, start, end) {
-        const startValue = data.find(d => d.minute === Math.floor(start)).temperature;
-        const endValue = data.find(d => d.minute === Math.floor(end)).temperature;
-        return ((endValue - startValue) / startValue) * 100;
-    }
+        function calculatePercentChange(data, start, end) {
+            const startValue = data.find(d => d.minute === Math.floor(start)).temperature;
+            const endValue = data.find(d => d.minute === Math.floor(end)).temperature;
+            return ((endValue - startValue) / startValue) * 100;
+        }
 
-    function updateMiniLegend(malePercentChange, femalePercentChange, xPos, yPos) {
-        const miniLegend = svg.select('.mini-legend');
-        if (miniLegend.empty()) {
-            svg.append('g')
-                .attr('class', 'mini-legend')
-                .style('visibility', 'hidden')
+        function updateMiniLegend(malePercentChange, femalePercentChange, xPos, yPos) {
+            const miniLegend = svg.select('.mini-legend');
+            if (miniLegend.empty()) {
+                svg.append('g')
+                    .attr('class', 'mini-legend')
+                    .style('visibility', 'hidden')
+                    .attr('transform', `translate(${xPos + 15}, ${yPos - 30})`);
+            }
+
+            svg.select('.mini-legend').html('')
+                .style('visibility', 'visible')
                 .attr('transform', `translate(${xPos + 15}, ${yPos - 30})`);
+
+            svg.select('.mini-legend')
+                .append('text')
+                .style('font-size', '12px')
+                .style('font-weight', 'bold')
+                .text('Percent Change');
+
+            svg.select('.mini-legend')
+                .append('text')
+                .style('font-size', '12px')
+                .text(`Male: ${malePercentChange.toFixed(2)}%`);
+
+            svg.select('.mini-legend')
+                .append('text')
+                .style('font-size', '12px')
+                .text(`Female: ${femalePercentChange.toFixed(2)}%`);
         }
-
-        svg.select('.mini-legend').html('')
-            .style('visibility', 'visible')
-            .attr('transform', `translate(${xPos + 15}, ${yPos - 30})`);
-
-        svg.select('.mini-legend')
-            .append('text')
-            .style('font-size', '12px')
-            .style('font-weight', 'bold')
-            .text('Percent Change');
-
-        svg.select('.mini-legend')
-            .append('text')
-            .style('font-size', '12px')
-            .text(`Male: ${malePercentChange.toFixed(2)}%`);
-
-        svg.select('.mini-legend')
-            .append('text')
-            .style('font-size', '12px')
-            .text(`Female: ${femalePercentChange.toFixed(2)}%`);
-    }
-        });
+    });
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
