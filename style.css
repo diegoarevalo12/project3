@@ -1,11 +1,11 @@
-/* Reset margins and padding */ 
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Set a font for the body */
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -13,7 +13,7 @@ body {
     margin: 20px;
 }
 
-/* Styling the main title */
+
 h1 {
     font-size: 2.5em;
     color: #2c3e50;
@@ -21,16 +21,16 @@ h1 {
     margin-bottom: 30px;
 }
 
-/* Make the chart container responsive */
+
 #chart {
     margin: auto;
     width: 100%;
-    max-width: 1200px;  /* Maximum width for larger screens */
-    height: auto;       /* Allow height to adjust based on the width */
+    max-width: 1200px;  
+    height: auto;       
     position: relative;
 }
 
-/* Styling the legend */
+
 .legend {
     display: flex;
     flex-direction: column;
@@ -39,15 +39,15 @@ h1 {
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    width: 20%;  /* Set to a percentage to make it responsive */
-    max-width: 200px; /* Max width for larger screens */
-    min-width: 150px; /* Ensure it's not too small */
+    width: 20%;  
+    max-width: 200px; 
+    min-width: 150px; 
     position: absolute;
     top: 20%;
     right: 5%;
 }
 
-/* Individual legend item styling */
+
 .legend-item {
     display: flex;
     align-items: center;
@@ -57,7 +57,7 @@ h1 {
     color: #333;
 }
 
-/* Color swatches for the legend */
+
 .swatch {
     width: 20px;
     height: 20px;
@@ -66,12 +66,12 @@ h1 {
     display: inline-block;
 }
 
-/* Dropdown menu styling */
+
 #legend-dropdown {
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    width: 80%; /* Dropdown width inside its container */
+    width: 80%; 
     height: 30px;
     font-family: Arial, sans-serif;
     font-size: 14px;
@@ -80,20 +80,20 @@ h1 {
     margin-top: 10px;
 }
 
-/* Option styling for the dropdown */
+
 #legend-dropdown option {
     padding: 5px;
 }
 
-/* Brush feature styling */
+
 .brush .selection {
-    fill: lightblue;  /* Light blue selection area */
+    fill: lightblue;  
     fill-opacity: 0.3;
-    stroke: #2196F3;  /* Blue border for the brush selection */
+    stroke: #2196F3;  
     stroke-width: 2;
 }
 
-/* Percentage change tooltip styling */
+
 .percentage-change {
     font-size: 16px;
     font-weight: bold;
@@ -105,28 +105,28 @@ h1 {
     max-width: 250px;
 }
 
-/* Tooltip positioning for percentage change */
+
 .percentage-change {
     position: absolute;
     top: 10%;
     left: 80%;
-    transform: translateX(10px);  /* Slight offset for neatness */
+    transform: translateX(10px);  
 }
 
-/* Responsive styles */
+
 @media (max-width: 768px) {
     .legend {
         position: relative;
-        width: 90%;  /* Take up most of the screen width on smaller screens */
+        width: 90%;  
         margin: 10px auto;
     }
 
     #legend-dropdown {
-        width: 100%; /* Full width dropdown on smaller screens */
+        width: 100%; 
     }
 
     .percentage-change {
         left: 100%;
-        transform: translateX(10px); /* Tooltip aligns more neatly on smaller screens */
+        transform: translateX(10px); 
     }
 }
